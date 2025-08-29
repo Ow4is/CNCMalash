@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>شركة الحلبي </title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --card:#111827;        /* gray-900 */
+      --muted:#94a3b8;       /* slate-400 */
+      --text:#e5e7eb;        /* gray-200 */
+      --accent:#22c55e;      /* green-500 */
+      --accent-2:#60a5fa;    /* blue-400 */
+      --danger:#ef4444;      /* red-500 */
+      --shadow: 0 20px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Kufi Arabic", Tahoma, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -20%, #1f2937, transparent), var(--bg);
+      color:var(--text);
+      display:grid; place-items:center; padding:24px;
+    }
+    .card{
+      width: min(980px, 96vw);
+      background: linear-gradient(145deg, #0b1220, #0c1324 35%, #0b1120 80%);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    header{
+      padding:28px 28px 8px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    }
+    .title{font-weight:800; font-size:clamp(20px, 2.4vw, 28px)}
+    .subtitle{color:var(--muted); font-size:14px}
+    .grid{
+      display:grid; gap:16px; padding:24px; grid-template-columns: repeat(12, 1fr);
+    }
+    .field{grid-column: span 12; display:flex; flex-direction:column; gap:8px}
+    @media (min-width: 720px){
+      .field.sm-6{grid-column: span 6}
+      .field.sm-4{grid-column: span 4}
+      .field.sm-3{grid-column: span 3}
+    }
+    label{font-weight:700; font-size:14px}
+    .hint{color:var(--muted); font-size:12px}
+    input[type="number"], select{
+      width:100%; padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.08);
+      background:#0b1220; color:var(--text); outline:none; transition:.2s border-color, .2s box-shadow;
+    }
+    input[type="number"]:focus, select:focus{border-color:var(--accent-2); box-shadow:0 0 0 4px rgba(96,165,250,.15)}
+    .actions{display:flex; gap:12px; padding:0 24px 24px; flex-wrap:wrap}
+    button{
+      padding:12px 18px; border-radius:12px; border:1px solid rgba(255,255,255,.08); cursor:pointer;
+      font-weight:700; background:#101827; color:var(--text); transition:.2s transform,.2s background,.2s border-color;
+    }
+    button.primary{background:linear-gradient(135deg, #16a34a, #22c55e); border-color:transparent}
+    button:hover{transform: translateY(-1px)}
+    button:active{transform: translateY(0)}
+
+    .result{
+      padding:22px 24px; background:rgba(34,197,94,.08); border-top:1px solid rgba(34,197,94,.25);
+      display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    }
+    .result .value{font-size: clamp(22px, 3.5vw, 34px); font-weight:900}
+    .result .meta{color:var(--muted); font-size:12px}
+
+    .eq{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; color:#c7d2fe}
+    .error{color:var(--danger); font-size:13px; padding-inline:24px; padding-bottom:10px; display:none}
+    .error.show{display:block}
+
+    footer{padding:0 24px 24px; color:var(--muted); font-size:12px}
+    .sep{height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent)}
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <header>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 8h16M7 12h10M10 16h4" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="title">حاسبة (طول × عرض × سمك × 8 × رقم)</div>
+        <div class="subtitle">أدخل القيم 👇 وسيتم حساب الناتج فورًا.</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="field sm-4">
+        <label for="lengthCm">الطول (سم)</label>
+        <input id="lengthCm" type="number" inputmode="decimal" min="0" step="0.01" placeholder="مثال: 120" />
+        <div class="hint">سيتم تحويله تلقائيًا إلى <b>متر</b> في المعادلة.</div>
+      </div>
+
+      <div class="field sm-4">
+        <label for="widthCm">العرض (سم)</label>
+        <input id="widthCm" type="number" inputmode="decimal" min="0" step="0.01" placeholder="مثال: 60" />
+        <div class="hint">سيتم تحويله تلقائيًا إلى <b>متر</b> في المعادلة.</div>
+      </div>
+
+      <div class="field sm-4">
+        <label for="thicknessMm">السُمك (ملّي متر)</label>
+        <input id="thicknessMm" type="number" inputmode="decimal" min="0" step="0.01" placeholder="مثال: 10" />
+        <div class="hint">يُستخدم كما هو (<b>ملّي</b>) دون تحويل.</div>
+      </div>
+
+      <div class="field sm-4">
+        <label for="ratio">اختر رقم (7 → 20)</label>
+        <select id="ratio" aria-label="الرقم من 7 إلى 20"></select>
+        <div class="hint">هذا الرقم يُضرب مباشرة في المعادلة.</div>
+      </div>
+
+      <div class="field sm-6">
+        <label>المعادلة</label>
+        <div class="hint eq">الناتج = (الطول بالـمتر) × (العرض بالـمتر) × (السُمك بالـملّي) × 8 × (الرقم المختار)</div>
+      </div>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="actions">
+      <button class="primary" id="calcBtn">احسب الآن</button>
+      <button id="clearBtn" title="تفريغ الحقول">تفريغ الحقول</button>
+    </div>
+    <div class="sep"></div>
+
+    <section class="result" aria-live="polite" aria-atomic="true">
+      <div>
+        <div class="meta">الناتج</div>
+        <div class="value" id="resultValue">0</div>
+      </div>
+      <div>
+        <div class="meta">تفاصيل التحويل</div>
+        <div class="eq" id="detail">—</div>
+      </div>
+    </section>
+
+    <footer>
+      ملاحظة: المدخلات بوحداتها كما هو موضح أعلاه. إذا تركت أي خانة فارغة أو كانت سالبة، لن يتم الحساب.
+    </footer>
+  </main>
+
+  <script>
+    // عناصر DOM
+    const lengthCm   = document.getElementById('lengthCm');
+    const widthCm    = document.getElementById('widthCm');
+    const thicknessMm= document.getElementById('thicknessMm');
+    const ratioSel   = document.getElementById('ratio');
+    const calcBtn    = document.getElementById('calcBtn');
+    const clearBtn   = document.getElementById('clearBtn');
+    const resultEl   = document.getElementById('resultValue');
+    const detailEl   = document.getElementById('detail');
+    const errorEl    = document.getElementById('error');
+
+    // تعبئة القائمة من 7 إلى 20
+    for(let i=7;i<=20;i++){
+      const opt=document.createElement('option');
+      opt.value=String(i);
+      opt.textContent=i;
+      ratioSel.appendChild(opt);
+    }
+
+    // أدوات مساعدة
+    const fmt = (n)=>{
+      if(!isFinite(n)) return '—';
+      // عرض حتى 6 خانات عشرية كحد أقصى بدون أصفار زائدة
+      const s = n.toLocaleString('ar-EG', { maximumFractionDigits: 6 });
+      return s;
+    };
+
+    const valid = ()=>{
+      const L = parseFloat(lengthCm.value);
+      const W = parseFloat(widthCm.value);
+      const T = parseFloat(thicknessMm.value);
+      const R = parseFloat(ratioSel.value);
+      let msg = [];
+      if(!(L>=0)) msg.push('الطول (سم) غير صالح');
+      if(!(W>=0)) msg.push('العرض (سم) غير صالح');
+      if(!(T>=0)) msg.push('السُمك (ملّي) غير صالح');
+      if(!(R>=7 && R<=20)) msg.push('اختر رقم بين 7 و 20');
+      if(msg.length){
+        errorEl.textContent = 'تحقق من الحقول: ' + msg.join('، ');
+        errorEl.classList.add('show');
+        return null;
+      }
+      errorEl.classList.remove('show');
+      return { L, W, T, R };
+    };
+
+    const compute = ()=>{
+      const v = valid();
+      if(!v){ resultEl.textContent = '0'; detailEl.textContent = '—'; return; }
+      const Lm = v.L / 100; // سم → متر
+      const Wm = v.W / 100; // سم → متر
+      const Tmm = v.T;      // ملّي كما هو
+      const product = Lm * Wm * Tmm * 8 * v.R;
+      resultEl.textContent = fmt(product);
+      detailEl.textContent = `(${fmt(Lm)} م) × (${fmt(Wm)} م) × (${fmt(Tmm)} ملّي) × 8 × (${v.R})`;
+    };
+
+    // أحداث
+    [lengthCm, widthCm, thicknessMm, ratioSel].forEach(el=>{
+      el.addEventListener('input', compute);
+      el.addEventListener('change', compute);
+    });
+    calcBtn.addEventListener('click', compute);
+    clearBtn.addEventListener('click', ()=>{
+      lengthCm.value = '';
+      widthCm.value = '';
+      thicknessMm.value = '';
+      ratioSel.selectedIndex = 0;
+      resultEl.textContent = '0';
+      detailEl.textContent = '—';
+      errorEl.classList.remove('show');
+    });
+
+    // حساب أولي
+    compute();
+  </script>
+</body>
+</html>
